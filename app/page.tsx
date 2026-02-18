@@ -6,7 +6,7 @@ export default function LoginPage() {
   const handleLogin = () => {
     supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: `${window.location.origin}/callback` },
+      options: { redirectTo: `${window.location.origin}/auth/callback` },
     })
   }
 
@@ -16,7 +16,7 @@ export default function LoginPage() {
         <header className="mb-4">
           <div>
             <h1 className="h4 fw-bold text-primary mb-1">Garner</h1>
-            <div className="text-muted small">insert here</div>
+            <div className="text-muted small">collect your favorites with ease</div>
           </div>
         </header>
 
