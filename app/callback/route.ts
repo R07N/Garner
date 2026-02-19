@@ -43,5 +43,5 @@ export async function GET(request: Request) {
   }
 
   // If there's an error, send them home
-  return NextResponse.redirect(`${origin}/`)
+  return NextResponse.redirect(`${origin}/dashboard`)
 }
