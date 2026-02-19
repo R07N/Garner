@@ -1,4 +1,5 @@
 🔖 Garner: Collect Your Favorites with Ease
+
 Garner is a high-performance, full-stack web application designed for seamless bookmark management. Built with Next.js 16 and Supabase, it features secure Google OAuth authentication and a responsive dashboard for managing your digital favorites.
 
 🚀 Live Demo
