@@ -7,30 +7,38 @@ export async function GET(request: Request) {
   const code = searchParams.get('code')
 
   if (code) {
-    const cookieStore = await cookies()
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          get(name: string) {
-            return cookieStore.get(name)?.value
+    try {
+      const cookieStore = await cookies()
+
+      const supabase = createServerClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        {
+          cookies: {
+            // Provide the getAll/setAll interface expected by @supabase/ssr
+            getAll() {
+              return cookieStore.getAll().map((c) => ({ name: c.name, value: c.value }))
+            },
+            setAll(cookiesToSet) {
+              cookiesToSet.forEach(({ name, value, options }) => {
+                // cookieStore.set expects { name, value, ...options }
+                cookieStore.set({ name, value, ...options })
+              })
+            },
           },
-          set(name: string, value: string, options: CookieOptions) {
-            cookieStore.set({ name, value, ...options })
-          },
-          remove(name: string, options: CookieOptions) {
-            cookieStore.set({ name, value: '', ...options })
-          },
-        },
+        }
+      )
+
+      // Exchange the temporary code for a session and log the result for debugging
+      const { data, error } = await supabase.auth.exchangeCodeForSession(code)
+      if (error) console.error('exchangeCodeForSession error:', error)
+      else console.log('exchangeCodeForSession success:', !!data?.session)
+
+      if (!error) {
+        return NextResponse.redirect(`${origin}/dashboard`)
       }
-    )
-    
-    // This part converts the temporary code into a permanent session
-    const { error } = await supabase.auth.exchangeCodeForSession(code)
-    
-    if (!error) {
-      return NextResponse.redirect(`${origin}/dashboard`)
+    } catch (err) {
+      console.error('Callback route error:', err)
     }
   }
 
