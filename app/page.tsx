@@ -4,9 +4,11 @@ import { createClient } from '@/utils/supabase'
 export default function LoginPage() {
   const supabase = createClient()
   const handleLogin = () => {
+    const redirectBase = (process.env.NEXT_PUBLIC_APP_URL as string) || window.location.origin
+
     supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: `${window.location.origin}/callback` },
+      options: { redirectTo: `${redirectBase}/callback` },
     })
   }
 
